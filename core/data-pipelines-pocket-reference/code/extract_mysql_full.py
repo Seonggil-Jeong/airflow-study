@@ -1,7 +1,11 @@
+# pipeline : Database(MySQL) > csv > S3
+
 import pymysql
 import csv
 import boto3
 import configparser
+
+# Database to CSV
 
 parser = configparser.ConfigParser()
 parser.read("../config/pipeline.conf")
@@ -23,7 +27,7 @@ else:
     print("MySQL connection established!")
 
     m_query = "select * from orders"
-    local_filename = "../output_data/order_extract.csv"
+    local_filename = "order_extract.csv"
 
     m_cursor = conn.cursor()
     m_cursor.execute(m_query)
@@ -36,3 +40,21 @@ else:
     fp.close()
     m_cursor.close()
     conn.close()
+
+    # CSV to S3
+
+    access_key = parser.get("aws_boto_credentials", "access_key")
+    secret_key = parser.get("aws_boto_credentials", "secret_key")
+    bucket_name = parser.get("aws_boto_credentials", "bucket_name")
+    region_name = parser.get("aws_boto_credentials", "region_name")
+
+    aws_session = boto3.Session(
+        aws_access_key_id=access_key,
+        aws_secret_access_key=secret_key,
+        region_name=region_name
+    )
+
+    s3 = s3_client = aws_session.client('s3')
+    s3_file = local_filename
+
+    s3.upload_file(local_filename, bucket_name, s3_file)
