@@ -58,3 +58,22 @@ else:
     s3_file = local_filename
 
     s3.upload_file(local_filename, bucket_name, s3_file)
+
+# extract_mysql_incremental
+# select t1.*
+# from orders as t1
+# where t1.last_updated > (select MAX(last_updated) from orders)
+
+# 이진 로그 수집
+# 1. 소스 데이터베이스 정보 copy to 데이터웨어하우스, (소스 테이블 lock, mysqldump -> 데이터웨어하우스에 로드)
+# 2. 이진 로그를 사용하여 후속 변경 사항을 수집
+
+# 이진 로그 활성화 확인 (ON or OFF)
+# select variable_value as bin_log_status
+# from performance_schema.global_variables
+# where VARIABLE_NAME='log_bin'
+
+# 이진 로그 format - status는 행동 (CUD)에 대해 SQL 문 자체를 기록
+# select variable_value as bin_log_format
+# from performance_schema.global_variables
+# where VARIABLE_NAME='binlog_format'
