@@ -1,0 +1,6 @@
+# pip install -r pip_list.txt
+configparser
+pandas
+numpy
+boto3 # AWS SDK
+pymysql # Extract from MySQL
